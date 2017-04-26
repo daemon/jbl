@@ -1,6 +1,5 @@
 package net.rocketeer.jbl.model.distribution;
 
-import net.rocketeer.jbl.model.variable.StateSpace;
 import net.rocketeer.jbl.model.variable.Variable;
 
 import java.util.HashMap;

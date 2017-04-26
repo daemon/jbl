@@ -1,15 +1,15 @@
 package net.rocketeer.jbl.model.variable;
 
-public class RealStateSpace implements StateSpace<Double> {
-  private final double lowerBound;
-  private final double upperBound;
+public class RealStateSpace implements NumericalStateSpace<Double> {
+  private double lowerBound;
+  private double upperBound;
 
   public RealStateSpace() {
-    this(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    this(Double.MIN_VALUE, Double.MAX_VALUE);
   }
 
   public RealStateSpace(double lowerBound) {
-    this(lowerBound, Double.POSITIVE_INFINITY);
+    this(lowerBound, Double.MAX_VALUE);
   }
 
   public RealStateSpace(double lowerBound, double upperBound) {
@@ -25,5 +25,22 @@ public class RealStateSpace implements StateSpace<Double> {
   @Override
   public Double read(Object object) {
     return (Double) object;
+  }
+
+  @Override
+  public Double upperBound() {
+    return this.upperBound;
+  }
+
+  @Override
+  public Double lowerBound() {
+    return this.lowerBound;
+  }
+
+  @Override
+  public <U extends Number> RealStateSpace map(NumericalStateSpace<U> space) {
+    this.lowerBound = space.lowerBound().doubleValue();
+    this.upperBound = space.upperBound().doubleValue();
+    return this;
   }
 }

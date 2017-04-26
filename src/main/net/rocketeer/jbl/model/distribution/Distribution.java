@@ -1,9 +1,12 @@
 package net.rocketeer.jbl.model.distribution;
 
-public abstract class Distribution {
-  public abstract double valueAt(IOBundle pack);
-  public abstract IOBundle sample(IOBundle pack);
-  public IOBundle sample() {
+import net.rocketeer.jbl.model.variable.Variable;
+
+public interface Distribution<T> {
+  double valueAt(IOBundle pack);
+  IOBundle sample(IOBundle pack);
+  Variable<T> response();
+  default IOBundle sample() {
     return this.sample(IOBundle.createEmpty());
   }
 }

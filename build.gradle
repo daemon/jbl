@@ -19,6 +19,11 @@ sourceSets {
             srcDirs = ['src/main']
         }
     }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
 }
 
 configurations {

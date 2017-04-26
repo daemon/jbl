@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class Variable<T> {
   private final String nameId;
-  private final StateSpace<T> space;
+  protected final StateSpace<T> space;
 
   public Variable(StateSpace<T> space) {
     this(space, UUID.randomUUID().toString());
@@ -33,5 +33,9 @@ public class Variable<T> {
   @Override
   public int hashCode() {
     return this.nameId.hashCode();
+  }
+
+  public <U> Variable<U> convert(StateSpace<U> space) {
+    return new Variable<>(space, this.id());
   }
 }
