@@ -1,0 +1,50 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+    flatDir {
+       dirs 'libs'
+    }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main']
+        }
+    }
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+task libraryJar(type: Jar) {
+    baseName = 'jbl'
+    manifest {
+        attributes 'Implementation-Title': 'jbl',
+                   'Implementation-Version': version
+    }
+    from (sourceSets.main.output) {
+        include "net/rocketeer/**"
+    }
+    from ("src/main/resources") {
+        include "**"
+    }
+    from {
+        (configurations.compile - configurations.provided).collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+}
+
+buildDir = 'bin'
