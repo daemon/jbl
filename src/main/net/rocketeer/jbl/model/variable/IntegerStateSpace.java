@@ -24,7 +24,8 @@ public class IntegerStateSpace implements NumericalStateSpace<Integer> {
 
   @Override
   public Integer read(Object object) {
-    return (Integer) object;
+    Number number = (Number) object;
+    return number.intValue();
   }
 
   public StateSpace<Double> asRealStateSpace() {

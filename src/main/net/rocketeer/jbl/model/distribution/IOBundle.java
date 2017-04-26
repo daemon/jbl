@@ -24,6 +24,11 @@ public class IOBundle {
     return variable.stateSpace().read(data);
   }
 
+  public IOBundle add(IOBundle other) {
+    other.dataMap.forEach(this.dataMap::put);
+    return this;
+  }
+
   public static Builder builder() {
     return new Builder();
   }

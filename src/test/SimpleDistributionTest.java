@@ -1,5 +1,6 @@
 import net.rocketeer.jbl.model.distribution.DiracDeltaDistribution;
 import net.rocketeer.jbl.model.distribution.NormalDistribution;
+import net.rocketeer.jbl.model.distribution.PoissonDistribution;
 
 public class SimpleDistributionTest {
   public static void main(String[] args) {
@@ -15,16 +16,28 @@ public class SimpleDistributionTest {
       System.out.println(gaussian.sample().read(gaussian.response()));
 
     // y ~ N(x, 1) where x ~ N(0, 1)
-    System.out.println("10 Normal distribution samples");
+    System.out.println("10 normal distribution samples");
     NormalDistribution y = NormalDistribution.builder().mu(gaussian).sigma(1).build();
     for (int i = 0; i < 10; ++i)
       System.out.println(y.sample().read(y.response()));
 
     // Performance test
     long a = System.currentTimeMillis();
-    for (int i = 0; i < 300000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
       Double val = gaussian.sample().read(gaussian.response());
     }
-    System.out.println("Samples per second: " + 300000 / ((System.currentTimeMillis() - a) / 1000.0));
+    System.out.println("Samples per second: " + 100000 / ((System.currentTimeMillis() - a) / 1000.0));
+
+    // Poisson distribution
+    System.out.println("10 Poisson distribution samples");
+    PoissonDistribution pd = PoissonDistribution.builder().mu(1.0).build();
+    for (int i = 0; i < 10; ++i)
+      System.out.println(pd.sample().read(pd.response()));
+
+    // Gaussian with Poisson hyperprior
+    System.out.println("10 Gaussian with Poisson hyperprior samples");
+    y = NormalDistribution.builder().mu(pd).sigma(1).build();
+    for (int i = 0; i < 10; ++i)
+      System.out.println(y.sample().read(y.response()));
   }
 }

@@ -25,7 +25,7 @@ public class NormalDistribution implements NumericalDistribution<Double> {
   private void refresh() {
     double mu = this.muPrior.sample().read(this.muVar);
     double sigma = this.sdPrior.sample().read(this.sigmaVar);
-    this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma * sigma);
+    this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma);
   }
 
   public static Builder builder() {

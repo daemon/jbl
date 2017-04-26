@@ -24,7 +24,8 @@ public class RealStateSpace implements NumericalStateSpace<Double> {
 
   @Override
   public Double read(Object object) {
-    return (Double) object;
+    Number number = (Number) object;
+    return number.doubleValue();
   }
 
   @Override
