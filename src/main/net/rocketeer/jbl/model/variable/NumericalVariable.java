@@ -1,11 +1,13 @@
 package net.rocketeer.jbl.model.variable;
 
+import java.util.UUID;
+
 public class NumericalVariable<T extends Number> extends Variable<T> {
   public NumericalVariable(NumericalStateSpace<T> space) {
     super(space);
   }
 
-  public NumericalVariable(NumericalStateSpace<T> space, String id) {
+  public NumericalVariable(NumericalStateSpace<T> space, UUID id) {
     super(space, id);
   }
 

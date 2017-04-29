@@ -1,9 +1,13 @@
 package net.rocketeer.jbl.model.distribution;
 
+import net.rocketeer.jbl.model.variable.DiscreteVariable;
+import net.rocketeer.jbl.model.variable.RealizedValue;
 import net.rocketeer.jbl.model.variable.Variable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class IOBundle {
   private Map<Variable, Object> dataMap = new HashMap<>();
@@ -29,6 +33,13 @@ public class IOBundle {
     return this;
   }
 
+  public Set<RealizedValue<?>> extractAll() {
+    Set<RealizedValue<?>> realizedValues = new HashSet<>();
+    for (Variable variable : this.dataMap.keySet())
+      realizedValues.add(new RealizedValue(variable, this.read(variable)));
+    return realizedValues;
+  }
+
   public static Builder builder() {
     return new Builder();
   }
@@ -36,6 +47,7 @@ public class IOBundle {
   public static class Builder {
     private Map<Variable, Object> dataMap = new HashMap<>();
     private Builder() {}
+
     public Builder set(Variable var, Object data) {
       this.dataMap.put(var, data);
       return this;
