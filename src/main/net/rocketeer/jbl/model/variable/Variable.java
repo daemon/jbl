@@ -1,9 +1,11 @@
 package net.rocketeer.jbl.model.variable;
 
+import net.rocketeer.jbl.model.variable.set.StateSpace;
+
 import java.util.UUID;
 
 public class Variable<T> {
-  private final UUID id;
+  private UUID id;
   protected final StateSpace<T> space;
 
   public Variable(StateSpace<T> space) {
@@ -17,6 +19,10 @@ public class Variable<T> {
 
   public UUID id() {
     return this.id;
+  }
+
+  public void setId(UUID id) {
+    this.id = id;
   }
 
   public StateSpace<T> stateSpace() {

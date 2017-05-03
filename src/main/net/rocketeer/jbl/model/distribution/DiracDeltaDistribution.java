@@ -1,8 +1,14 @@
 package net.rocketeer.jbl.model.distribution;
 
+import net.rocketeer.jbl.model.io.IOBundle;
 import net.rocketeer.jbl.model.variable.*;
+import net.rocketeer.jbl.model.variable.set.IntegerStateSpace;
+import net.rocketeer.jbl.model.variable.set.RealStateSpace;
 
-public class DiracDeltaDistribution<T extends Number> implements NumericalDistribution<T> {
+import java.util.Collections;
+import java.util.Set;
+
+public class DiracDeltaDistribution<T extends Number> extends NumericalDistribution<T> {
   private final T value;
   private NumericalVariable<T> xVar;
   private final Double maxValue;
@@ -14,7 +20,7 @@ public class DiracDeltaDistribution<T extends Number> implements NumericalDistri
   }
 
   @Override
-  public double valueAt(IOBundle pack) {
+  public double probabilityAt(IOBundle pack) {
     T value = pack.read(this.xVar);
     if (value.equals(this.value))
       return this.maxValue;
@@ -23,7 +29,7 @@ public class DiracDeltaDistribution<T extends Number> implements NumericalDistri
 
   @Override
   public IOBundle sample(IOBundle pack) {
-    return IOBundle.builder().set(this.xVar, this.value).build();
+    return IOBundle.builder().set(this.xVar, this.value).set(this.probability(), this.maxValue).build();
   }
 
   @Override
@@ -47,5 +53,10 @@ public class DiracDeltaDistribution<T extends Number> implements NumericalDistri
 
   public static DiracDeltaDistribution<Integer> createConstant(Integer value, NumericalVariable<Integer> variable) {
     return new DiracDeltaDistribution<>(value, 1.0, variable);
+  }
+
+  @Override
+  public Set<Variable<?>> domain() {
+    return Collections.singleton(this.response());
   }
 }

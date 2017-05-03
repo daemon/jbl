@@ -1,4 +1,9 @@
-package net.rocketeer.jbl.model.variable;
+package net.rocketeer.jbl.model.variable.set;
+
+import net.rocketeer.jbl.model.distribution.RealUniformDistribution;
+import net.rocketeer.jbl.model.variable.NumericalVariable;
+import net.rocketeer.jbl.model.variable.Variable;
+import net.rocketeer.jbl.sample.Sampler;
 
 public class RealStateSpace implements NumericalStateSpace<Double> {
   private double lowerBound;
@@ -26,6 +31,13 @@ public class RealStateSpace implements NumericalStateSpace<Double> {
   public Double read(Object object) {
     Number number = (Number) object;
     return number.doubleValue();
+  }
+
+  @Override
+  public Sampler createUniformSampler(Variable boundVariable) {
+    if (!(boundVariable.stateSpace() instanceof RealStateSpace))
+      throw new IllegalArgumentException("Variable has to be in same state space!");
+    return RealUniformDistribution.builder().response(new NumericalVariable<>(this, boundVariable.id())).build();
   }
 
   @Override

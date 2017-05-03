@@ -1,10 +1,15 @@
 package net.rocketeer.jbl.model.distribution;
 
+import net.rocketeer.jbl.model.io.IOBundle;
 import net.rocketeer.jbl.model.variable.NumericalVariable;
-import net.rocketeer.jbl.model.variable.RealStateSpace;
+import net.rocketeer.jbl.model.variable.set.RealStateSpace;
 import net.rocketeer.jbl.model.variable.Variable;
 
-public class NormalDistribution implements NumericalDistribution<Double> {
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class NormalDistribution extends NumericalDistribution<Double> {
   private final Distribution muPrior;
   private final Distribution sdPrior;
   private final Variable<Double> muVar;
@@ -37,7 +42,7 @@ public class NormalDistribution implements NumericalDistribution<Double> {
   }
 
   @Override
-  public double valueAt(IOBundle pack) {
+  public double probabilityAt(IOBundle pack) {
     this.refresh();
     Double x = pack.read(this.xVar);
     return this.dist.density(x);
@@ -45,19 +50,20 @@ public class NormalDistribution implements NumericalDistribution<Double> {
 
   @Override
   public IOBundle sample(IOBundle pack) {
-    if (pack.isEmpty())
-      this.refresh();
-    else {
-      Double mu = pack.read(this.muVar);
-      Double sigma = pack.read(this.sigmaVar);
-      if (mu == null)
-        mu = this.muPrior.sample().read(this.muVar);
-      if (sigma == null)
-        sigma = this.sdPrior.sample().read(this.sigmaVar);
-      this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma);
-    }
-    double val = this.dist.sample();
-    return IOBundle.builder().set(this.xVar, val).build();
+    Double mu = pack.read(this.muVar);
+    Double sigma = pack.read(this.sigmaVar);
+    if (mu == null)
+      mu = this.muPrior.sample().read(this.muVar);
+    if (sigma == null)
+      sigma = this.sdPrior.sample().read(this.sigmaVar);
+    this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma);
+    IOBundle bundle = IOBundle.builder().set(this.xVar, this.dist.sample()).set(this.muVar, mu).set(this.sigmaVar, sigma).build();
+    return IOBundle.builder().add(bundle).set(this.probability(), this.probabilityAt(bundle)).build();
+  }
+
+  @Override
+  public Set<Variable<?>> domain() {
+    return new HashSet<>(Arrays.asList(this.response(), this.muVar, this.sigmaVar));
   }
 
   public static class Builder {

@@ -1,5 +1,7 @@
 package net.rocketeer.jbl.model.variable;
 
+import net.rocketeer.jbl.model.variable.set.NumericalStateSpace;
+
 import java.util.UUID;
 
 public class NumericalVariable<T extends Number> extends Variable<T> {

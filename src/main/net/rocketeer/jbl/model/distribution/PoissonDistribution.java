@@ -1,11 +1,16 @@
 package net.rocketeer.jbl.model.distribution;
 
-import net.rocketeer.jbl.model.variable.IntegerStateSpace;
+import net.rocketeer.jbl.model.io.IOBundle;
+import net.rocketeer.jbl.model.variable.set.IntegerStateSpace;
 import net.rocketeer.jbl.model.variable.NumericalVariable;
-import net.rocketeer.jbl.model.variable.RealStateSpace;
+import net.rocketeer.jbl.model.variable.set.RealStateSpace;
 import net.rocketeer.jbl.model.variable.Variable;
 
-public class PoissonDistribution implements NumericalDistribution<Integer> {
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class PoissonDistribution extends NumericalDistribution<Integer> {
   private final Variable<Double> muVar;
   private final Distribution muPrior;
   private final NumericalVariable<Integer> xVar;
@@ -24,7 +29,7 @@ public class PoissonDistribution implements NumericalDistribution<Integer> {
   }
 
   @Override
-  public double valueAt(IOBundle pack) {
+  public double probabilityAt(IOBundle pack) {
     this.refresh();
     int value = pack.read(this.response());
     return this.dist.probability(value);
@@ -41,7 +46,8 @@ public class PoissonDistribution implements NumericalDistribution<Integer> {
       this.dist = new org.apache.commons.math3.distribution.PoissonDistribution(mu);
     }
     int val = this.dist.sample();
-    return IOBundle.builder().set(this.xVar, val).build();
+    pack = IOBundle.builder().set(this.xVar, val).build();
+    return IOBundle.builder().add(pack).set(this.probability(), this.probabilityAt(pack)).build();
   }
 
   @Override
@@ -51,6 +57,11 @@ public class PoissonDistribution implements NumericalDistribution<Integer> {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  @Override
+  public Set<Variable<?>> domain() {
+    return new HashSet<>(Arrays.asList(this.response(), this.muVar));
   }
 
   public static class Builder {

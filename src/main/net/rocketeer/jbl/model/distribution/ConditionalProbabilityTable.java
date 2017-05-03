@@ -1,14 +1,15 @@
 package net.rocketeer.jbl.model.distribution;
 
-import net.rocketeer.jbl.model.variable.DiscreteStateSpace;
+import net.rocketeer.jbl.model.io.IOBundle;
+import net.rocketeer.jbl.model.variable.set.DiscreteStateSpace;
 import net.rocketeer.jbl.model.variable.DiscreteVariable;
-import net.rocketeer.jbl.model.variable.RealizedValue;
+import net.rocketeer.jbl.model.io.RealizedValue;
 import net.rocketeer.jbl.model.variable.Variable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ConditionalProbabilityTable<T extends Enum> implements DiscreteDistribution<T> {
+public class ConditionalProbabilityTable<T extends Enum> extends DiscreteDistribution<T> {
   private final Map<Set<RealizedValue<? extends Enum>>, Map<RealizedValue<? extends Enum>, Double>> probabilityTable;
   private final DiscreteVariable<T> responseVariable;
   private final Map<DiscreteVariable<? extends Enum>, DiscreteDistribution> domain;
@@ -23,7 +24,7 @@ public class ConditionalProbabilityTable<T extends Enum> implements DiscreteDist
   // TODO: marginalize function that returns a new CPT without the specified variables
 
   @Override
-  public double valueAt(IOBundle pack) {
+  public double probabilityAt(IOBundle pack) {
     Set<RealizedValue<?>> realizedValues = new HashSet<>();
     for (DiscreteVariable<? extends Enum> variable : this.domain.keySet())
       realizedValues.add(new RealizedValue(variable, pack.read(variable)));
@@ -65,6 +66,14 @@ public class ConditionalProbabilityTable<T extends Enum> implements DiscreteDist
 
   public static <T extends Enum> Builder<T> builder() {
     return new Builder<>();
+  }
+
+  @Override
+  public Set<Variable<?>> domain() {
+    Set<Variable<?>> set = new HashSet<>();
+    set.add(this.response());
+    set.addAll(this.domain.keySet());
+    return set;
   }
 
   public static class Builder<T extends Enum> {

@@ -1,17 +1,12 @@
-package net.rocketeer.jbl.model.distribution;
+package net.rocketeer.jbl.model.io;
 
-import net.rocketeer.jbl.model.variable.DiscreteVariable;
-import net.rocketeer.jbl.model.variable.RealizedValue;
 import net.rocketeer.jbl.model.variable.Variable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class IOBundle {
   private Map<Variable, Object> dataMap = new HashMap<>();
-  private IOBundle() {}
+  public IOBundle() {}
 
   public static IOBundle createEmpty() {
     return new IOBundle();
@@ -28,8 +23,19 @@ public class IOBundle {
     return variable.stateSpace().read(data);
   }
 
-  public IOBundle add(IOBundle other) {
-    other.dataMap.forEach(this.dataMap::put);
+  public IOBundle add(IOBundle...other) {
+    for (IOBundle o : other)
+      o.dataMap.forEach(this.dataMap::put);
+    return this;
+  }
+
+  public IOBundle set(Variable var, Object data) {
+    this.dataMap.put(var, data);
+    return this;
+  }
+
+  public IOBundle changeVariable(Variable to, Variable from) {
+    this.dataMap.put(to, this.dataMap.remove(from));
     return this;
   }
 
@@ -46,6 +52,7 @@ public class IOBundle {
 
   public static class Builder {
     private Map<Variable, Object> dataMap = new HashMap<>();
+    private List<IOBundle> bundles = new LinkedList<>();
     private Builder() {}
 
     public Builder set(Variable var, Object data) {
@@ -53,9 +60,15 @@ public class IOBundle {
       return this;
     }
 
+    public Builder add(IOBundle bundle) {
+      this.bundles.add(bundle);
+      return this;
+    }
+
     public IOBundle build() {
       IOBundle pack = new IOBundle();
       pack.dataMap = this.dataMap;
+      this.bundles.forEach(pack::add);
       return pack;
     }
   }

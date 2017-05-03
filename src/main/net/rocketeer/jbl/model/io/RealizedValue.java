@@ -1,4 +1,6 @@
-package net.rocketeer.jbl.model.variable;
+package net.rocketeer.jbl.model.io;
+
+import net.rocketeer.jbl.model.variable.Variable;
 
 public class RealizedValue<T> {
   private final T value;

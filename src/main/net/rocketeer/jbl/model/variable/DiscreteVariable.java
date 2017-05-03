@@ -1,5 +1,7 @@
 package net.rocketeer.jbl.model.variable;
 
+import net.rocketeer.jbl.model.variable.set.DiscreteStateSpace;
+
 import java.util.UUID;
 
 public class DiscreteVariable<T extends Enum> extends Variable<T> {

@@ -1,4 +1,9 @@
-package net.rocketeer.jbl.model.variable;
+package net.rocketeer.jbl.model.variable.set;
+
+import net.rocketeer.jbl.model.distribution.DiscreteUniformDistribution;
+import net.rocketeer.jbl.model.variable.DiscreteVariable;
+import net.rocketeer.jbl.model.variable.Variable;
+import net.rocketeer.jbl.sample.Sampler;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,6 +24,14 @@ public class DiscreteStateSpace<T extends Enum> implements StateSpace<T> {
   @Override
   public T read(Object object) {
     return (T) object;
+  }
+
+  @Override
+  public Sampler createUniformSampler(Variable variable) {
+    if (!(variable.stateSpace() instanceof DiscreteStateSpace))
+      throw new IllegalArgumentException("Variable has to be in same state space!");
+    DiscreteVariable<T> x = new DiscreteVariable<>(this, variable.id());
+    return new DiscreteUniformDistribution<>(x);
   }
 
   public Set<T> elements() {

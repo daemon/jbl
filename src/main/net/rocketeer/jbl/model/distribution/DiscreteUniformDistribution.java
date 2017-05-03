@@ -1,12 +1,12 @@
 package net.rocketeer.jbl.model.distribution;
 
+import net.rocketeer.jbl.model.io.IOBundle;
 import net.rocketeer.jbl.model.variable.DiscreteVariable;
+import net.rocketeer.jbl.model.variable.Variable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-public class DiscreteUniformDistribution<T extends Enum> implements DiscreteDistribution<T> {
+public class DiscreteUniformDistribution<T extends Enum> extends DiscreteDistribution<T> {
   private final DiscreteVariable<T> response;
   private final List<T> elements;
 
@@ -18,7 +18,7 @@ public class DiscreteUniformDistribution<T extends Enum> implements DiscreteDist
   }
 
   @Override
-  public double valueAt(IOBundle pack) {
+  public double probabilityAt(IOBundle pack) {
     if (!this.response.stateSpace().contains(pack.read(this.response)))
       return 0;
     return 1.0 / this.response.stateSpace().elements().size();
@@ -27,11 +27,17 @@ public class DiscreteUniformDistribution<T extends Enum> implements DiscreteDist
   @Override
   public IOBundle sample(IOBundle pack) {
     Random random = new Random();
-    return IOBundle.builder().set(this.response(), this.elements.get(random.nextInt(this.elements.size()))).build();
+    return IOBundle.builder().set(this.response(), this.elements.get(random.nextInt(this.elements.size())))
+        .set(this.probability(), 1.0 / this.response.stateSpace().elements().size()).build();
   }
 
   @Override
   public DiscreteVariable<T> response() {
     return this.response;
+  }
+
+  @Override
+  public Set<Variable<?>> domain() {
+    return Collections.singleton(this.response);
   }
 }
