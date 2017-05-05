@@ -10,14 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class NormalDistribution extends NumericalDistribution<Double> {
-  private final Distribution muPrior;
-  private final Distribution sdPrior;
-  private final Variable<Double> muVar;
-  private final Variable<Double> sigmaVar;
+  private Distribution muPrior;
+  private Distribution sdPrior;
+  private NumericalVariable<Double> muVar;
+  private final NumericalVariable<Double> sigmaVar;
   private final NumericalVariable<Double> xVar;
   private org.apache.commons.math3.distribution.NormalDistribution dist;
 
-  private NormalDistribution(Variable<Double> muVar, Variable<Double> sigmaVar, Distribution muPrior, Distribution variancePrior,
+  private NormalDistribution(NumericalVariable<Double> muVar, NumericalVariable<Double> sigmaVar, Distribution muPrior, Distribution variancePrior,
                              NumericalVariable<Double> xVar) {
     this.muVar = muVar;
     this.sigmaVar = sigmaVar;
@@ -31,6 +31,14 @@ public class NormalDistribution extends NumericalDistribution<Double> {
     double mu = this.muPrior.sample().read(this.muVar);
     double sigma = this.sdPrior.sample().read(this.sigmaVar);
     this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma);
+  }
+
+  public void setMu(double mu) {
+    this.muPrior = DiracDeltaDistribution.createConstant(mu, this.muVar);
+  }
+
+  public void setSigma(double sigma) {
+    this.sdPrior = DiracDeltaDistribution.createConstant(sigma, this.sigmaVar);
   }
 
   public static Builder builder() {
@@ -73,7 +81,10 @@ public class NormalDistribution extends NumericalDistribution<Double> {
     private NumericalDistribution sigmaPrior;
     private NumericalVariable<Double> xVar = new NumericalVariable<>(new RealStateSpace());
 
-    protected Builder() {}
+    protected Builder() {
+      this.sigma(1);
+      this.mu(0);
+    }
 
     public Builder mu(NumericalDistribution distribution) {
       this.muPrior = distribution;

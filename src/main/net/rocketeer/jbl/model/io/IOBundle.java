@@ -47,6 +47,15 @@ public class IOBundle {
     return realizedValues;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    this.dataMap.forEach((v, o) -> {
+      builder.append(v.id()).append(" : ").append(o.toString()).append(" | ");
+    });
+    return builder.toString();
+  }
+
   public static Builder builder() {
     return new Builder();
   }
