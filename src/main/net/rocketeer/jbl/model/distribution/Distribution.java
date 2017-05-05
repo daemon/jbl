@@ -5,7 +5,7 @@ import net.rocketeer.jbl.model.io.IOBundle;
 import net.rocketeer.jbl.model.variable.NumericalVariable;
 import net.rocketeer.jbl.model.variable.Variable;
 import net.rocketeer.jbl.model.variable.set.RealStateSpace;
-import net.rocketeer.jbl.sample.Sampler;
+import net.rocketeer.jbl.compute.Sampler;
 
 import java.util.Collections;
 import java.util.Set;

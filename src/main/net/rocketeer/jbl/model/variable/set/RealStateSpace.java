@@ -3,7 +3,7 @@ package net.rocketeer.jbl.model.variable.set;
 import net.rocketeer.jbl.model.distribution.RealUniformDistribution;
 import net.rocketeer.jbl.model.variable.NumericalVariable;
 import net.rocketeer.jbl.model.variable.Variable;
-import net.rocketeer.jbl.sample.Sampler;
+import net.rocketeer.jbl.compute.Sampler;
 
 public class RealStateSpace implements NumericalStateSpace<Double> {
   private double lowerBound;

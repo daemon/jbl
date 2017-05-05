@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Set;
 
 public class DiracDeltaDistribution<T extends Number> extends NumericalDistribution<T> {
-  private final T value;
+  private T value;
   private NumericalVariable<T> xVar;
   private final Double maxValue;
 
@@ -17,6 +17,10 @@ public class DiracDeltaDistribution<T extends Number> extends NumericalDistribut
     this.value = value;
     this.maxValue = maxValue;
     this.xVar = x;
+  }
+
+  public void setValue(T value) {
+    this.value = value;
   }
 
   @Override

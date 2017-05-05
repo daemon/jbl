@@ -3,7 +3,7 @@ package net.rocketeer.jbl.model.variable.set;
 import net.rocketeer.jbl.model.distribution.DiscreteUniformDistribution;
 import net.rocketeer.jbl.model.variable.DiscreteVariable;
 import net.rocketeer.jbl.model.variable.Variable;
-import net.rocketeer.jbl.sample.Sampler;
+import net.rocketeer.jbl.compute.Sampler;
 
 import java.util.Collections;
 import java.util.HashSet;

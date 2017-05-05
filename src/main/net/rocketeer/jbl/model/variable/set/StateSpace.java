@@ -1,7 +1,7 @@
 package net.rocketeer.jbl.model.variable.set;
 
 import net.rocketeer.jbl.model.variable.Variable;
-import net.rocketeer.jbl.sample.Sampler;
+import net.rocketeer.jbl.compute.Sampler;
 
 public interface StateSpace<T> {
   boolean contains(T value);

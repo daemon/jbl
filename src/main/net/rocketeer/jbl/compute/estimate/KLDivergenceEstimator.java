@@ -1,5 +1,6 @@
-package net.rocketeer.jbl.sample;
+package net.rocketeer.jbl.compute.estimate;
 
+import net.rocketeer.jbl.compute.Sampler;
 import net.rocketeer.jbl.model.distribution.Distribution;
 import net.rocketeer.jbl.model.io.IOBundle;
 
@@ -15,14 +16,14 @@ public class KLDivergenceEstimator implements MonteCarloEstimator {
   private int nIterations = 0;
   private final List<Sampler> pSamplers;
 
-  public <T> KLDivergenceEstimator(Distribution<T> p, Distribution<T> q) {
+  public KLDivergenceEstimator(Distribution p, Distribution q) {
     this.d1 = p;
     this.d2 = q;
     this.pSamplers = Collections.singletonList(p);
     this.qSamplers = Collections.singletonList(q);
   }
 
-  public <T> KLDivergenceEstimator(Distribution<T> p, Distribution<T> q, List<Sampler> pSamplers, List<Sampler> qSamplers) {
+  public KLDivergenceEstimator(Distribution p, Distribution q, List<Sampler> pSamplers, List<Sampler> qSamplers) {
     this.d1 = p;
     this.d2 = q;
     this.pSamplers = pSamplers;
@@ -31,24 +32,23 @@ public class KLDivergenceEstimator implements MonteCarloEstimator {
 
   private void iterate() {
     IOBundle bundle = new IOBundle();
-    Distribution d1 = this.d1;
-    Distribution d2 = this.d2;
-    List<Sampler> samplers = this.pSamplers;
-    if (Math.random() < 0.5) {
-      d1 = this.d2;
-      d2 = this.d1;
-      samplers = this.qSamplers;
-    }
-    for (Sampler sampler : samplers)
+    double roll = Math.random(); // For importance sampling, unused for now
+    for (Sampler sampler : (roll < 1 ? this.pSamplers : this.qSamplers))
       bundle.add(sampler.sample());
-    double d1p = d1.probabilityAt(bundle);
-    double d2p = d2.probabilityAt(bundle.changeVariable(d2.response(), d1.response()));
-    double pp = this.d1.probabilityAt(bundle.changeVariable(this.d1.response(), d2.response()));
-    if (Math.abs(d1p) < 0.000001)
+    if (roll < 1)
+      bundle = this.d1.sample(bundle);
+    else
+      bundle = this.d2.sample(bundle);
+    double pp = this.d1.probabilityAt(bundle.changeVariable(this.d1.response(), this.d2.response()));
+    double qp = this.d2.probabilityAt(bundle.changeVariable(this.d2.response(), this.d1.response()));
+    if (Math.abs(qp) < 0.00000001) {
       this.iterate();
-    double divergence = 0;
-    if (Math.abs(d2p) > 0.000001)
-      divergence = pp * Math.log(d1p / d2p);
+      return;
+    }
+    double ratio = Math.min(pp / qp, 10000000.0);
+    double divergence = Math.log(ratio);
+    if (roll > 1)
+      divergence *= ratio;
     ++this.nIterations;
     this.mean += (divergence - this.mean) / this.nIterations;
     this.mean2 += (divergence * divergence - this.mean2) / this.nIterations;

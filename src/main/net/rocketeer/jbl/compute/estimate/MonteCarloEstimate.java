@@ -1,4 +1,4 @@
-package net.rocketeer.jbl.sample;
+package net.rocketeer.jbl.compute.estimate;
 
 public class MonteCarloEstimate {
   private final double result;

@@ -35,7 +35,8 @@ public class IOBundle {
   }
 
   public IOBundle changeVariable(Variable to, Variable from) {
-    this.dataMap.put(to, this.dataMap.remove(from));
+    if (this.dataMap.containsKey(from))
+      this.dataMap.put(to, this.dataMap.remove(from));
     return this;
   }
 

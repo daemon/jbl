@@ -57,7 +57,7 @@ public class NormalDistribution extends NumericalDistribution<Double> {
     if (sigma == null)
       sigma = this.sdPrior.sample().read(this.sigmaVar);
     this.dist = new org.apache.commons.math3.distribution.NormalDistribution(mu, sigma);
-    IOBundle bundle = IOBundle.builder().set(this.xVar, this.dist.sample()).set(this.muVar, mu).set(this.sigmaVar, sigma).build();
+    IOBundle bundle = IOBundle.builder().set(this.xVar, this.dist.sample()).build();
     return IOBundle.builder().add(bundle).set(this.probability(), this.probabilityAt(bundle)).build();
   }
 
@@ -102,6 +102,12 @@ public class NormalDistribution extends NumericalDistribution<Double> {
     public Builder response(NumericalVariable<Double> x) {
       this.xVar = x;
       return this;
+    }
+
+    public NormalDistribution buildTransitionalDistribution(double mu) {
+      this.muVar = this.xVar;
+      this.mu(mu);
+      return this.build();
     }
 
     public NormalDistribution build() {

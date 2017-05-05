@@ -1,4 +1,4 @@
-package net.rocketeer.jbl.sample;
+package net.rocketeer.jbl.compute.estimate;
 
 public interface MonteCarloEstimator {
   MonteCarloEstimate compute(int iterations);

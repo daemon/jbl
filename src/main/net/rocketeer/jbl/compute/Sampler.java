@@ -1,4 +1,4 @@
-package net.rocketeer.jbl.sample;
+package net.rocketeer.jbl.compute;
 
 import net.rocketeer.jbl.model.io.IOBundle;
 
